@@ -3,7 +3,7 @@ import { Component } from 'react';
 import SearchBar from './SearchBar/SearchBar';
 import ImageGallery from './ImageGallery/ImageGallery';
 import LoadMoreBtn from './LoadMoreBtn/LoadMoreBtn';
-import { ToastContainer, toast } from 'react-toastify';
+// import { ToastContainer, toast } from 'react-toastify';
 
 export default class App extends Component {
   render() {
