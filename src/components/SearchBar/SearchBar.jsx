@@ -13,8 +13,8 @@ export default class SearchBar extends Component {
           <input
             className="input"
             type="text"
-            autocomplete="off"
-            autofocus
+            autoComplete="off"
+            autoFocus
             placeholder="Search images and photos"
           />
         </form>
