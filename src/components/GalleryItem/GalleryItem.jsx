@@ -1,10 +1,10 @@
 import React from 'react';
 import { ImageGalleryItemStyled } from './GalleryItem.styled';
 
-export default function GalleryItem() {
+export default function GalleryItem({ webformatURL, largeImageURL }) {
   return (
     <ImageGalleryItemStyled>
-      <img src="" alt="" />
+      <img src={webformatURL} alt="" />
     </ImageGalleryItemStyled>
   );
 }

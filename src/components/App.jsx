@@ -12,6 +12,7 @@ export default class App extends Component {
   state = {
     formInput: null,
     images: [],
+    loading: false,
   };
 
   getFormInput = ({ input }) => {
@@ -20,10 +21,10 @@ export default class App extends Component {
 
   async componentDidUpdate(prevProps, prevState) {
     if (prevState.formInput !== this.state.formInput) {
+      this.setState({ loading: true });
       try {
         const imagesArr = await fetchImagesWithQuery(this.state.formInput);
-        this.setState({ images: imagesArr });
-        console.log(this.state.images);
+        this.setState(prevState => ({ images: imagesArr, loading: false }));
       } catch (error) {
         console.log(error);
       }
@@ -31,23 +32,27 @@ export default class App extends Component {
   }
 
   render() {
+    const { images } = this.state;
+    console.log(images);
     return (
       <div>
         <SearchBar onSubmit={this.getFormInput}></SearchBar>
-        <ImageGallery></ImageGallery>
+        {images.length > 0 && <ImageGallery imagesArr={images}></ImageGallery>}
         <LoadMoreBtn></LoadMoreBtn>
-        <ProgressBar
-          height="80"
-          width="80"
-          ariaLabel="progress-bar-loading"
-          wrapperStyle={{
-            display: 'block',
-            margin: '0 auto',
-          }}
-          wrapperClass="progress-bar-wrapper"
-          borderColor="#F4442E"
-          barColor="#51E5FF"
-        />
+        {this.state.loading && (
+          <ProgressBar
+            height="80"
+            width="80"
+            ariaLabel="progress-bar-loading"
+            wrapperStyle={{
+              display: 'block',
+              margin: '0 auto',
+            }}
+            wrapperClass="progress-bar-wrapper"
+            borderColor="#F4442E"
+            barColor="#3f51b5"
+          />
+        )}
         {/* <Modal></Modal> */}
       </div>
     );

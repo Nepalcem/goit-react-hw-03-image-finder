@@ -8,7 +8,7 @@ export default class SearchBar extends Component {
 
   handleChange = e => {
     const { value } = e.currentTarget;
-    this.setState({ input: value.trim() });
+    this.setState({ input: value.toLowerCase() });
   };
   submitHandler = e => {
     e.preventDefault();
