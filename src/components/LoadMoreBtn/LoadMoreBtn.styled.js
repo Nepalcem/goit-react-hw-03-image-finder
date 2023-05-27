@@ -5,7 +5,7 @@ export const LoadMoreBtnStyled = styled.button`
   border-radius: 2px;
   background-color: #3f51b5;
   transition: all 250ms cubic-bezier(0.4, 0, 0.2, 1);
-  margin: 0 auto;
+  margin: 20px auto;
   display: block;
   color: #fff;
   border: 0;

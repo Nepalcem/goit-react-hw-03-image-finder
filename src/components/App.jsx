@@ -13,6 +13,7 @@ export default class App extends Component {
     formInput: null,
     images: [],
     loading: false,
+    pageId: 1,
   };
 
   getFormInput = ({ input }) => {
@@ -29,19 +30,40 @@ export default class App extends Component {
           this.setState({ loading: false });
           return toast.info('Sorry no images werefound per your request..');
         }
-        this.setState(prevState => ({ images: imagesArr, loading: false }));
+        this.setState(prevState => ({
+          images: imagesArr,
+          loading: false,
+          pageId: 2,
+        }));
       } catch (error) {
         toast.error(error);
       }
     }
   }
 
+  loadMore = async () => {
+    const { pageId, formInput } = this.state;
+    this.setState({ loading: true });
+    try {
+      const imagesArr = await fetchImagesWithQuery(formInput, pageId);
+
+      this.setState(prevState => ({
+        images: [...prevState.images, ...imagesArr],
+        loading: false,
+        pageId: prevState.pageId + 1,
+      }));
+    } catch (error) {
+      toast.error(error);
+    }
+  };
+
   render() {
     const { images, loading } = this.state;
-    console.log(images);
     return (
       <div>
         <SearchBar onSubmit={this.getFormInput}></SearchBar>
+
+        {images.length > 0 && <ImageGallery imagesArr={images}></ImageGallery>}
         {loading && (
           <ProgressBar
             height="80"
@@ -56,8 +78,9 @@ export default class App extends Component {
             barColor="#3f51b5"
           />
         )}
-        {images.length > 0 && <ImageGallery imagesArr={images}></ImageGallery>}
-        {images.length > 0 && <LoadMoreBtn></LoadMoreBtn>}
+        {images.length >= 12 && (
+          <LoadMoreBtn onloadMore={this.loadMore}></LoadMoreBtn>
+        )}
         <ToastContainer autoClose={4000} theme="colored" />
       </div>
     );

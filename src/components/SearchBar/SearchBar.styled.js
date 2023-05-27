@@ -61,6 +61,7 @@ export const SearchBarStyled = styled.header`
     display: inline-block;
     width: 100%;
     font: inherit;
+    line-height: normal;
     font-size: 20px;
     border: none;
     outline: none;
