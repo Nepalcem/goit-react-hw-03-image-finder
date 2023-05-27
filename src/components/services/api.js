@@ -12,9 +12,6 @@ export const fetchImagesWithQuery = async (
   pageId = baseConfig.pageId
 ) => {
   const { BASE_URL, key, per_page } = baseConfig;
-  console.log(
-    `${BASE_URL}?q=${searchQuery}&page=${pageId}&key=${key}&image_type=photo&orientation=horizontal&per_page=${per_page}`
-  );
   const response = await axios.get(
     `${BASE_URL}?q=${searchQuery}&page=${pageId}&key=${key}&image_type=photo&orientation=horizontal&per_page=${per_page}`
   );
