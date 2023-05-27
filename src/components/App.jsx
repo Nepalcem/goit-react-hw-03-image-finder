@@ -3,9 +3,9 @@ import { Component } from 'react';
 import SearchBar from './SearchBar/SearchBar';
 import ImageGallery from './ImageGallery/ImageGallery';
 import LoadMoreBtn from './LoadMoreBtn/LoadMoreBtn';
-// import { ToastContainer, toast } from 'react-toastify';
 import { ProgressBar } from 'react-loader-spinner';
-// import Modal from './Modal/Modal';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { fetchImagesWithQuery } from './services/api';
 
 export default class App extends Component {
@@ -21,25 +21,28 @@ export default class App extends Component {
 
   async componentDidUpdate(prevProps, prevState) {
     if (prevState.formInput !== this.state.formInput) {
-      this.setState({ loading: true });
+      this.setState({ loading: true, images: [] });
       try {
         const imagesArr = await fetchImagesWithQuery(this.state.formInput);
+
+        if (imagesArr.length === 0) {
+          this.setState({ loading: false });
+          return toast.info('Sorry no images werefound per your request..');
+        }
         this.setState(prevState => ({ images: imagesArr, loading: false }));
       } catch (error) {
-        console.log(error);
+        toast.error(error);
       }
     }
   }
 
   render() {
-    const { images } = this.state;
+    const { images, loading } = this.state;
     console.log(images);
     return (
       <div>
         <SearchBar onSubmit={this.getFormInput}></SearchBar>
-        {images.length > 0 && <ImageGallery imagesArr={images}></ImageGallery>}
-        <LoadMoreBtn></LoadMoreBtn>
-        {this.state.loading && (
+        {loading && (
           <ProgressBar
             height="80"
             width="80"
@@ -53,7 +56,9 @@ export default class App extends Component {
             barColor="#3f51b5"
           />
         )}
-        {/* <Modal></Modal> */}
+        {images.length > 0 && <ImageGallery imagesArr={images}></ImageGallery>}
+        {images.length > 0 && <LoadMoreBtn></LoadMoreBtn>}
+        <ToastContainer autoClose={4000} theme="colored" />
       </div>
     );
   }
