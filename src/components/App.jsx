@@ -14,6 +14,7 @@ export default class App extends Component {
     images: [],
     loading: false,
     pageId: 1,
+    showLoadMore: false,
   };
 
   getFormInput = ({ input }) => {
@@ -24,14 +25,19 @@ export default class App extends Component {
     if (prevState.formInput !== this.state.formInput) {
       this.setState({ loading: true, images: [] });
       try {
-        const imagesArr = await fetchImagesWithQuery(this.state.formInput);
+        const apiResponse = await fetchImagesWithQuery(this.state.formInput);
+        const { hits, totalHits } = apiResponse;
 
-        if (imagesArr.length === 0) {
+        if (totalHits > hits.length) {
+          this.setState({ showLoadMore: true });
+        }
+
+        if (hits.length === 0) {
           this.setState({ loading: false });
-          return toast.info('Sorry no images werefound per your request..');
+          return toast.info('Sorry no images were found per your request..');
         }
         this.setState(prevState => ({
-          images: imagesArr,
+          images: hits,
           loading: false,
           pageId: 2,
         }));
@@ -45,10 +51,16 @@ export default class App extends Component {
     const { pageId, formInput } = this.state;
     this.setState({ loading: true });
     try {
-      const imagesArr = await fetchImagesWithQuery(formInput, pageId);
+      const apiResponse = await fetchImagesWithQuery(formInput, pageId);
+      const { hits, totalHits } = apiResponse;
+
+      if (totalHits <= pageId * 12) {
+        this.setState({ showLoadMore: false });
+        toast.info(`You've reached the end of the collection!`);
+      }
 
       this.setState(prevState => ({
-        images: [...prevState.images, ...imagesArr],
+        images: [...prevState.images, ...hits],
         loading: false,
         pageId: prevState.pageId + 1,
       }));
@@ -58,7 +70,7 @@ export default class App extends Component {
   };
 
   render() {
-    const { images, loading } = this.state;
+    const { images, loading, showLoadMore } = this.state;
     return (
       <div>
         <SearchBar onSubmit={this.getFormInput}></SearchBar>
@@ -78,9 +90,7 @@ export default class App extends Component {
             barColor="#3f51b5"
           />
         )}
-        {images.length >= 12 && (
-          <LoadMoreBtn onloadMore={this.loadMore}></LoadMoreBtn>
-        )}
+        {showLoadMore && <LoadMoreBtn onloadMore={this.loadMore}></LoadMoreBtn>}
         <ToastContainer autoClose={4000} theme="colored" />
       </div>
     );
